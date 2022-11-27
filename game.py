@@ -1,8 +1,6 @@
 from typing import Iterable, Tuple
 import entities
 
-WAR_QT_CARDS = 3
-
 
 def deal_cards(cards: entities.FullDeck, player1: entities.Player, player2: entities.Player) -> None:
     """
@@ -95,6 +93,7 @@ def main():
     print(r"  ###   ###   ###     ### ###    ### ")
     print()
 
+    WAR_QT_CARDS = 3
     player1 = entities.Player("Player 1")
     player2 = entities.Player("Player 2")
     full_deck = entities.FullDeck()
