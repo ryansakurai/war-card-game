@@ -59,11 +59,8 @@ def gather_cards(cards: Iterable[entities.Card], player1: entities.Player, playe
 
     cards = list(cards)
     for player in (player1, player2):
-        try:
-            for _ in range(0, 3):
-                cards.append( player.remove_card() )
-        except IndexError:
-            pass
+        for _ in range(0, 3):
+            cards.append( player.remove_card() )
     return cards
 
 
@@ -82,7 +79,6 @@ def loser(player1: entities.Player, player2: entities.Player) -> entities.Player
             return player
 
 def print_result(player1: entities.Player, player2: entities.Player) -> None:
-    print_players(player1, player2)
     if len(player1) <= 0:
         print(f"{player2.name} has won the game!")
     else:
@@ -118,6 +114,8 @@ def main():
 
     while True:
         print_players(player1, player2)
+        if loser(player1, player2) != None:
+            break
 
         card1 = player1.remove_card()
         cards_in_table.append(card1)
@@ -134,17 +132,17 @@ def main():
             print("Player 2 won the round")
             player2.add_cards(cards_in_table)
         else:
-            print("IT'S WAR!")
-            cards_in_table = gather_cards(cards_in_table, player1, player2)
-            continue
+            try:
+                print("IT'S WAR!")
+                cards_in_table = gather_cards(cards_in_table, player1, player2)
+                continue
+            except IndexError:
+                break
 
-        if loser(player1, player2) != None:
-            break
-        else:
-            cards_in_table.clear()
-            print()
-            print(DIV)
-            print()
+        cards_in_table.clear()
+        print()
+        print(DIV)
+        print()
 
     print_result(player1, player2)
 
