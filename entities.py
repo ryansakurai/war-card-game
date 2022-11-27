@@ -101,12 +101,13 @@ class Player:
     def __init__(self, name: str) -> None:
         self.name = name
         self.deck = Deck()
+        self.rounds_won = 0
 
     def __len__(self) -> int:
         return len(self.deck)
 
     def __str__(self) -> str:
-        return f"{self.name}: {len(self.deck)} cards"
+        return f"{self.name}: {self.rounds_won} rounds won"
 
     def add_cards(self, card: Card | Iterable[Card]) -> None:
         """
@@ -128,6 +129,13 @@ class Player:
         """
 
         return self.deck.remove_card()
+
+    def win_round(self) -> None:
+        """
+        Adds a win to the player's count
+        """
+
+        self.rounds_won += 1
 
 
 def compare(first: Card, second: Card) -> int:
