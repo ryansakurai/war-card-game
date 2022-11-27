@@ -1,11 +1,10 @@
 from typing import Iterable, Tuple
 import entities
 
-
 DIV = "-\|/-\|/-\|/-\|/-\|/-\|/-\|/-\|/-\|/-\|/-"
 
 
-def deal_cards(cards: entities.FullDeck, player1: entities.Player, player2: entities.Player) -> bool:
+def deal_cards(cards: entities.FullDeck, player1: entities.Player, player2: entities.Player) -> None:
     """
     Deals the cards in 'cards' to the players in 'players'
 
@@ -19,16 +18,10 @@ def deal_cards(cards: entities.FullDeck, player1: entities.Player, player2: enti
     If the cards were dealt equaly to the players
     """
 
-    try:
-        while len(cards) > 0:
-            for player in (player1, player2):
-                card = cards.deal_card()
-                player.add_cards(card)
-    except IndexError:
-        return False
-    else:
-        return True
-
+    while len(cards) > 0:
+        for player in (player1, player2):
+            card = cards.remove_card()
+            player.add_cards(card)
 
 def print_players(player1: entities.Player, player2: entities.Player) -> None:
     """
@@ -43,7 +36,7 @@ def print_players(player1: entities.Player, player2: entities.Player) -> None:
         print(player)
 
 
-def gather_cards(cards: Iterable[entities.Card], player1: entities.Player, player2:entities.Player) -> Tuple[entities.Card]:
+def gather_cards(cards: Iterable[entities.Card], player1: entities.Player, player2: entities.Player, amount: int) -> Tuple[entities.Card]:
     """
     Gathers all the cards to be given to the war round winner
 
@@ -52,6 +45,8 @@ def gather_cards(cards: Iterable[entities.Card], player1: entities.Player, playe
         Cards already gathered
     player1: entities.Player, player2:entities.Player
         Players of the game
+    amount: int
+        Amount of cards to be taken from each player
 
     Returns
         All the cards gathered
@@ -59,7 +54,7 @@ def gather_cards(cards: Iterable[entities.Card], player1: entities.Player, playe
 
     cards = list(cards)
     for player in (player1, player2):
-        for _ in range(0, 3):
+        for _ in range(amount):
             cards.append( player.remove_card() )
     return cards
 
@@ -78,11 +73,23 @@ def loser(player1: entities.Player, player2: entities.Player) -> entities.Player
         if len(player) <= 0:
             return player
 
-def print_result(player1: entities.Player, player2: entities.Player) -> None:
+def print_result(player1: entities.Player, player2: entities.Player, rounds: int) -> None:
+    """
+    Prints the result of the game
+
+    Parameters
+    player1: entities.Player, player2: entities.Player
+        Players in the game
+    rounds: int
+        Total of rounds played
+    """
+
+    print_players(player1, player2)
     if len(player1) <= 0:
-        print(f"{player2.name} has won the game!")
+        print(f"{player1.name} is out of cards, {player2.name} has won the game!")
     else:
-        print(f"{player1.name} has won the game!")
+        print(f"{player2.name} is out of cards, {player1.name} has won the game!")
+    print(f"Number of rounds: {rounds}")
 
 
 def main():
@@ -108,14 +115,15 @@ def main():
 
     cards_in_table = []
 
-    print()
-    print(DIV)
-    print()
-
+    round = 1
     while True:
-        print_players(player1, player2)
         if loser(player1, player2) != None:
             break
+
+        print("\n" + DIV + "\n")
+        print(f"ROUND {round}")
+        round += 1
+        print_players(player1, player2)
 
         card1 = player1.remove_card()
         cards_in_table.append(card1)
@@ -134,17 +142,15 @@ def main():
         else:
             try:
                 print("IT'S WAR!")
-                cards_in_table = gather_cards(cards_in_table, player1, player2)
+                cards_in_table = gather_cards(cards_in_table, player1, player2, 3)
                 continue
             except IndexError:
                 break
 
         cards_in_table.clear()
-        print()
-        print(DIV)
-        print()
 
-    print_result(player1, player2)
+    print("\n" + DIV + "\n")
+    print_result(player1, player2, round)
 
 
 if __name__ == "__main__":
