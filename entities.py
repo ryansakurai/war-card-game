@@ -43,7 +43,7 @@ def compare(first: Card, second: Card) -> int:
 
 class FullDeck:
     """
-    Deck holding all 56 cards, shuffled
+    Deck holding all 56 cards
     """
 
     def __init__(self) -> None:
@@ -51,7 +51,9 @@ class FullDeck:
         for suit in SUITS:
             for rank in RANKS:
                 self.cards.append( Card(suit, rank) )
-        self.shuffle()
+
+    def __len__(self) -> int:
+        return len(self.cards)
 
     def shuffle(self) -> None:
         """
@@ -79,6 +81,9 @@ class Player:
     def __init__(self, name: str) -> None:
         self.name = name
         self.deck = []
+
+    def __len__(self) -> int:
+        return len(self.deck)
 
     def __str__(self) -> str:
         return f"{self.name}: {len(self.deck)} cards"
