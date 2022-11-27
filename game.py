@@ -35,13 +35,16 @@ def gather_cards(cards: Iterable[entities.Card], player1: entities.Player, playe
         Amount of cards to be taken from each player
 
     Returns
-        All the cards gathered
+        All the cards gathered or None, if not possible
     """
 
     cards = list(cards)
     for player in (player1, player2):
-        for _ in range(amount):
-            cards.append( player.remove_card() )
+        try:
+            for _ in range(amount):
+                cards.append( player.remove_card() )
+        except IndexError:
+            return None
     return cards
 
 
@@ -100,9 +103,9 @@ def main():
     full_deck.shuffle()
     deal_cards(full_deck, player1, player2)
     cards_in_table = []
-
     rounds = 0
     wars = 0
+
     while True:
         rounds += 1
 
@@ -123,10 +126,7 @@ def main():
             cards_in_table.clear()
         else:
             wars += 1
-            if len(player1) >= WAR_QT_CARDS and len(player2) >= WAR_QT_CARDS:
-                cards_in_table = gather_cards(cards_in_table, player1, player2, WAR_QT_CARDS)
-            else:
-                break
+            cards_in_table = gather_cards(cards_in_table, player1, player2, WAR_QT_CARDS)
 
         if loser(player1, player2) != None:
             break
