@@ -46,7 +46,7 @@ def find_loser(player1: entities.Player, player2: entities.Player) -> entities.P
             return player
 
 def print_result(player1: entities.Player, player2: entities.Player, qt_rounds: int, qt_wars: int) -> None:
-    if len(player1) <= 0:
+    if find_loser(player1, player2) == player1:
         print(f"{player2.name} has won the game!")
     else:
         print(f"{player1.name} has won the game!")
