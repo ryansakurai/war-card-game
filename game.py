@@ -3,7 +3,7 @@ WAR CARD GAME
 
 Simulation of the card game war that gives stats at the end of the match.
 
-- All 56 cards are used
+- All 52 cards are used
 - The cards are shuffled only once, at the start of the match
 - When war happens, each player withdraws 3 cards
 """
@@ -13,57 +13,30 @@ import entities
 
 
 def deal_cards(cards: entities.FullDeck, player1: entities.Player, player2: entities.Player) -> None:
-    """
-    Deals the cards in 'cards' to the players in 'players'
-
-    Parameters
-    cards: entities.FullDeck
-        Cards to be dealt
-    player1: entities.Player, player2: entities.Player
-        Players to receive the cards
-
-    Returns
-    If the cards were dealt equaly to the players
-    """
-
     while len(cards) > 0:
         for player in (player1, player2):
             card = cards.remove_card()
             player.add_cards(card)
 
 
-def gather_cards(cards: Iterable[entities.Card], player1: entities.Player, player2: entities.Player, amount: int) -> Tuple[entities.Card]:
+def gather_cards_to_war(cards_gathered: Iterable[entities.Card], player1: entities.Player, player2: entities.Player, amount: int) -> Tuple[entities.Card]:
     """
-    Gathers all the cards to be given to the war round winner
-
-    Parameters
-    cards: Iterable[entities.Card]
-        Cards already gathered
-    player1: entities.Player, player2:entities.Player
-        Players of the game
-    amount: int
-        Amount of cards to be taken from each player
-
     Returns
         All the cards gathered or None, if not possible
     """
 
-    cards = list(cards)
+    cards_gathered = list(cards_gathered)
     for player in (player1, player2):
         try:
             for _ in range(amount):
-                cards.append( player.remove_card() )
+                cards_gathered.append( player.remove_card() )
         except IndexError:
             return None
-    return cards
+    return cards_gathered
 
 
-def loser(player1: entities.Player, player2: entities.Player) -> entities.Player | None:
+def find_loser(player1: entities.Player, player2: entities.Player) -> entities.Player | None:
     """
-    Parameters
-    player1: entities.Player, player2: entities.Player
-        Players in the game
-
     Returns
     The loser or None, if there isn't one yet
     """
@@ -72,25 +45,13 @@ def loser(player1: entities.Player, player2: entities.Player) -> entities.Player
         if len(player) <= 0:
             return player
 
-def print_result(player1: entities.Player, player2: entities.Player, rounds: int, wars: int) -> None:
-    """
-    Prints the result of the game
-
-    Parameters
-    player1: entities.Player, player2: entities.Player
-        Players in the game
-    rounds: int
-        Total of rounds played
-    wars: int
-        Total of wars in the game
-    """
-
+def print_result(player1: entities.Player, player2: entities.Player, qt_rounds: int, qt_wars: int) -> None:
     if len(player1) <= 0:
         print(f"{player2.name} has won the game!")
     else:
         print(f"{player1.name} has won the game!")
-    print(f"Number of rounds: {rounds}")
-    print(f"Number of wars: {wars}")
+    print(f"Number of rounds: {qt_rounds}")
+    print(f"Number of wars: {qt_wars}")
     print()
     print(player1)
     print(player2)
@@ -136,9 +97,9 @@ def main():
             cards_in_table.clear()
         else:
             wars += 1
-            cards_in_table = gather_cards(cards_in_table, player1, player2, WAR_QT_CARDS)
+            cards_in_table = gather_cards_to_war(cards_in_table, player1, player2, WAR_QT_CARDS)
 
-        if loser(player1, player2) != None:
+        if find_loser(player1, player2) != None:
             break
 
     print_result(player1, player2, rounds, wars)
